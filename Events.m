@@ -2,9 +2,11 @@
 
 #import <CaptainHook/CaptainHook.h>
 #import <SpringBoard/SpringBoard.h>
-#import <UIKit/UIKit-Private.h>
-
+#import <SpringBoard/SBUIController.h>
+#import <UIKit/UIKit-p.h>
+typedef float CGFloat;
 NSString * const LAEventNameMenuPressAtSpringBoard = @"libactivator.menu.press.at-springboard";
+NSString * const LAEventNameMenuPressSingle        = @"libactivator.menu.press.single";
 NSString * const LAEventNameMenuPressDouble        = @"libactivator.menu.press.double";
 NSString * const LAEventNameMenuHoldShort          = @"libactivator.menu.hold.short";
 
@@ -41,6 +43,7 @@ static void LAAbortEvent(LAEvent *event)
 static BOOL shouldInterceptMenuPresses;
 
 CHDeclareClass(SpringBoard);
+CHDeclareClass(SBUIController);
 
 CHMethod0(void, SpringBoard, _handleMenuButtonEvent)
 {
@@ -140,6 +143,15 @@ CHMethod0(void, SpringBoard, menuButtonWasHeld)
 		menuEventToAbort = nil;
 	}
 	CHSuper0(SpringBoard, menuButtonWasHeld);
+}
+
+CHMethod0(BOOL, SBUIController, clickedMenuButton)
+{
+    BOOL b = [LASendEventWithName(LAEventNameMenuPressSingle) isHandled];
+    NSLog(@"Fpmosimoimoimoim %d", b);
+    if(b)
+        return true;
+    return CHSuper0(SBUIController, clickedMenuButton);
 }
 
 CHMethod0(void, SpringBoard, activatorMenuButtonTimerCompleted)
@@ -321,4 +333,7 @@ CHConstructor
 	CHHook2(SBStatusBar, touchesBegan, withEvent);
 	CHHook2(SBStatusBar, touchesMoved, withEvent);
 	CHHook2(SBStatusBar, touchesEnded, withEvent);
+
+    CHLoadLateClass(SBUIController);
+    CHHook0(SBUIController, clickedMenuButton);
 }

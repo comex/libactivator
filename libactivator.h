@@ -1,4 +1,6 @@
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit-p.h>
+#import <UIKit/UITableView.h>
 
 // Events
 
@@ -17,6 +19,7 @@
 
 extern NSString * const LAEventNameMenuPressAtSpringBoard;
 extern NSString * const LAEventNameMenuPressDouble;
+extern NSString * const LAEventNameMenuPressSingle;
 extern NSString * const LAEventNameMenuHoldShort;
 
 extern NSString * const LAEventNameLockHoldShort;

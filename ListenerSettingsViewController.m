@@ -2,7 +2,8 @@
 
 #import <notify.h>
 #include <sys/stat.h>
-
+#import <UIKit/UIKit-p.h>
+#import <Foundation/Foundation.h>]
 #define CGRectZero ({ \
 	CGRect zeroFrame; \
 	zeroFrame.origin.x = 0.0f; \

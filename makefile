@@ -22,7 +22,10 @@ LDFLAGS= \
 		-framework CoreFoundation -framework Foundation -framework UIKit \
 		-lobjc
 
-CFLAGS= -I/var/root/Headers -I/var/sdk/include -I/var/include \
+CFLAGS= -I/var/root/Headers -I/var/sdk/usr/include -I/var/include -I/var/sdk/usr/include/private \
+		-I/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.sdk/usr/lib/gcc/i686-apple-darwin9/4.2.1/include/ \
+		-F/var/sdk/System/Library/Frameworks \
+		-F/var/sdk/System/Library/PrivateFrameworks \
 		-fno-common \
 		-g0 -O2 \
 		-std=c99 \
@@ -63,7 +66,7 @@ $(CONFIG_TARGET): $(CONFIG_OBJECTS)
 		$(COMPILER) $(LDFLAGS) -o $@ $^
 		ldid -S $@
 				
-package: $(TARGET) $(PREFS_TARGET) $(CONFIG_TARGET) control
+pk: $(TARGET) $(PREFS_TARGET) $(CONFIG_TARGET) control
 		rm -rf package
 		mkdir -p package/DEBIAN
 		cp -a control preinst prerm package/DEBIAN
@@ -72,8 +75,12 @@ package: $(TARGET) $(PREFS_TARGET) $(CONFIG_TARGET) control
 		- plutil -convert binary1 package/Library/MobileSubstrate/DynamicLibraries/Activator.plist
 		dpkg-deb -b package $(shell grep ^Package: control | cut -d ' ' -f 2)_$(shell grep ^Version: control | cut -d ' ' -f 2)_iphoneos-arm.deb
 		
-install: package
-		dpkg -i $(shell grep ^Package: control | cut -d ' ' -f 2)_$(shell grep ^Version: control | cut -d ' ' -f 2)_iphoneos-arm.deb
+install: pk
+		echo INSTALL
+		su comex -c "scp -P 2222 fs/usr/lib/libactivator.dylib root@127.0.0.1:/tmp/"
+		su comex -c "ssh -p 2222 root@127.0.0.1 'mv /tmp/libactivator.dylib /usr/lib/; killall SpringBoard'"
+
+		#dpkg -i $(shell grep ^Package: control | cut -d ' ' -f 2)_$(shell grep ^Version: control | cut -d ' ' -f 2)_iphoneos-arm.deb
 
 respring: install
 		respring
